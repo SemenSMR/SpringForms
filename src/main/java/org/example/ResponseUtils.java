@@ -23,6 +23,21 @@ public class ResponseUtils {
             e.printStackTrace();
         }
     }
+    public static void responseOk(byte[] content, int contentLength, BufferedOutputStream out) {
+        try {
+            out.write((
+                    "HTTP/1.1 200 OK\r\n" +
+                            "Content-Type: text/plain\r\n" +  // Замените на нужный вам Content-Type
+                            "Content-Length: " + contentLength + "\r\n" +
+                            "Connection: close\r\n" +
+                            "\r\n"
+            ).getBytes());
+            out.write(content, 0, contentLength);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void badRequest(BufferedOutputStream out) throws IOException {
         out.write((

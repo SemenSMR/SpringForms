@@ -1,5 +1,10 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class RequestLine {
     private final String method;
     private final String path;
@@ -10,6 +15,7 @@ public class RequestLine {
         this.path = path;
         this.version = version;
     }
+
 
     public String getMethod() {
         return method;
@@ -22,6 +28,8 @@ public class RequestLine {
     public String getVersion() {
         return version;
     }
+
+
 
     @Override
     public String toString() {

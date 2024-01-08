@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     private static final List<String> validPaths = List.of("/index.html", "/spring.svg",
@@ -26,6 +27,12 @@ public class Main {
                 }
             });
         }
+        server.addHandler("GET", "/forms.html", (request, responseStream) -> {
+            String paramValue = request.getQueryParam("param");
+            Map<String, List<String>> queryParams = request.getQueryParams();
+            String response = "Получен параметр 'param' со значением: " + paramValue;
+            ResponseUtils.responseOk(response.getBytes(), response.getBytes().length, responseStream);
+        });
 
         server.addHandler("GET", "/classic.html", (request, responseStream) -> {
                     try {
