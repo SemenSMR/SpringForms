@@ -27,7 +27,7 @@ public class ResponseUtils {
         try {
             out.write((
                     "HTTP/1.1 200 OK\r\n" +
-                            "Content-Type: text/plain\r\n" +  // Замените на нужный вам Content-Type
+                            "Content-Type: text/plain\r\n" +
                             "Content-Length: " + contentLength + "\r\n" +
                             "Connection: close\r\n" +
                             "\r\n"

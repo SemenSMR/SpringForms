@@ -1,5 +1,9 @@
 package org.example;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,10 +13,28 @@ public class Request {
     private final RequestLine requestLine;
     private final List<String> headers;
     private String body;
+    private  Map<String, List<String>> queryParams;
 
     public Request(RequestLine requestLine, List<String> headers) {
         this.requestLine = requestLine;
         this.headers = headers;
+        this.queryParams = parseQueryParams(requestLine.getPath());
+
+    }
+    private Map<String, List<String>> parseQueryParams(String path) {
+        List<NameValuePair> params = URLEncodedUtils.parse(path, StandardCharsets.UTF_8);
+        Map<String, List<String>> queryParamsMap = new HashMap<>();
+
+        for (NameValuePair param : params) {
+            String key = param.getName();
+            String value = param.getValue();
+            queryParamsMap.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
+        }
+
+        return queryParamsMap;
+    }
+    public Map<String, List<String>> getQueryParams() {
+        return queryParams;
     }
 
     public Request(RequestLine requestLine, List<String> headers, String body) {
@@ -21,48 +43,6 @@ public class Request {
         this.body = body;
     }
 
-    public String getQueryParam(String name) {
-        String queryString = getQueryString();
-        if (queryString != null && queryString.length() > 0) {
-            String[] params = queryString.split("&");
-            for (String param : params) {
-                String[] keyValue = param.split("=");
-                if (keyValue.length == 2 && keyValue[0].equals(name)) {
-                    return keyValue[1];
-                }
-            }
-        }
-        return null;
-    }
-
-    public Map<String, List<String>> getQueryParams() {
-        Map<String, List<String>> queryParamsMap = new HashMap<>();
-        String queryString = getQueryString();
-        if (queryString != null && queryString.length() > 0) {
-            String[] params = queryString.split("&");
-            for (String param : params) {
-                String[] keyValue = param.split("=");
-                if (keyValue.length == 2) {
-                    String key = keyValue[0];
-                    String value = keyValue[1];
-                    queryParamsMap.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
-                }
-            }
-        }
-        return queryParamsMap;
-    }
-
-    private String getQueryString() {
-        for (String header : headers) {
-            if (header.startsWith("GET") || header.startsWith("POST")) {
-                int questionMarkIndex = header.indexOf("?");
-                if (questionMarkIndex != -1) {
-                    return header.substring(questionMarkIndex + 1);
-                }
-            }
-        }
-        return null;
-    }
 
     public RequestLine getRequestLine() {
         return requestLine;
